@@ -20,7 +20,6 @@ angular
   .config( [ '$stateProvider', '$urlRouterProvider', 
     function($stateProvider, $urlRouterProvider) {
       $urlRouterProvider.otherwise('/');
-
       $stateProvider
         .state('home', {
           url: '/',
@@ -31,5 +30,5 @@ angular
           url: '/about',
           templateUrl: 'views/about.html',
           controller: 'AboutCtrl'
-        })
+        });
   }]);

@@ -7,32 +7,36 @@
  * # MainCtrl
  * Controller of the trafficApp
  */
-angular.module('trafficApp')
-  .controller('MainCtrl', ['$scope', '$timeout', '$http', 
-    function ($scope, $timeout, $http, $templateCache) {
-        $scope.trafficItems = [];
-        $scope.method = 'JSONP';
-        /** $scope.url = 'http://localhost:8888/t?CHECKJS&callback=JSON_CALLBACK'; */
-        $scope.url = 'http://arbz.io:8888/t?CHECKJS&callback=JSON_CALLBACK';
-        
-        $scope.fetch = function() {
-            $scope.code = null;
-            $scope.response = null;
-            $scope.trafficItems.splice(0,$scope.trafficItems.length);
-            $http({method: $scope.method, url: $scope.url, cache: $templateCache}).
-                success(function(data, status) {
-                    var trafficJson = angular.fromJson(data);
-                    angular.forEach(trafficJson.DATA, function(elem) {
-                        var info = elem[1].split(' - ');
-                        var level = getLevel(info[0]);
-                        $scope.trafficItems.push({exit:elem[0],speed:info[0],note:info[1],category:level});
-                    });
-                    $scope.status = status;
-                }).
-                error(function(data, status) {
-                    $scope.data = data || 'Request Failed';
-                    $scope.status = status;
+ var app = angular.module('trafficApp');
+
+ app.controller('MainCtrl', ['$scope', 'TrafficService', 
+    function ($scope, TrafficService) {
+        $scope.trafficItems = TrafficService.list();
+    }]);
+
+ app.factory('TrafficService', ['$http', 
+    function ($http) {
+        var trafficArray = [];
+        var fetch = function(items) {
+            var trafficUrl = 'http://arbz.io:8888/t?CHECKJS&callback=JSON_CALLBACK';
+            var responseStatus = null;
+            var errorData = null;
+            items.splice(0,items.length);
+            $http.jsonp(trafficUrl).
+            success(function(data, status) {
+                var trafficJson = angular.fromJson(data);
+                angular.forEach(trafficJson.DATA, function(elem) {
+                    var info = elem[1].split(' - ');
+                    var level = getLevel(info[0]);
+                    items.push({exit:elem[0],speed:info[0],note:info[1],category:level});
                 });
+                responseStatus = status;
+            }).
+            error(function(data, status) {
+                errorData = data || 'Request Failed';
+                responseStatus = status;
+            });
+            return items;
         };
 
         var getLevel = function(speed) {
@@ -47,5 +51,11 @@ angular.module('trafficApp')
             }
         };
 
-        $timeout($scope.fetch(), 3000);
-  }]);
+        return {
+            list: function() {
+                return fetch(trafficArray);
+            }
+        };
+
+    }]);
+
