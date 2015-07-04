@@ -1,0 +1,16 @@
+<div ng-controller="MainCtrl">
+    <!-- <button type="button" class="btn btn-warning" id="fetch" ng-click="fetch()" >fetch</button><br> -->
+    
+    <div ng-model="trafficItems">
+        <div class="row" ng-repeat="traffic in trafficItems">
+            <div class='col-xs-10'>
+                <span>
+                    <button class='btn btn-{{traffic.category}} btn-block'>{{traffic.exit}} @ {{traffic.speed}}</button>
+                </span>
+                <span ng-if='traffic.note'>
+                    <button class='btn btn-{{traffic.category}} btn-block' title='{{traffic.note}}'><small>{{traffic.note}}</small></button>
+                </span> 
+            </div>
+        </div>
+    </div>
+</div>
