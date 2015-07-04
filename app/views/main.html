@@ -1,10 +1,10 @@
 <div>
   <!-- <button type="button" class="btn btn-warning" id="fetch" ng-click="fetch()" >fetch</button><br> -->
   <div ng-model="trafficItems">
-    <div class="row" ng-repeat="traffic in trafficItems">
+  <div ui-sref-active='selected' class="row" ng-repeat="traffic in trafficItems">
       <div class='col-xs-10'>
         <span>
-          <button class='btn btn-{{traffic.category}} btn-block'>{{traffic.exit}} @ {{traffic.speed}}</button>
+          <button class='btn btn-{{traffic.category}} btn-block' ui-sref='traffic.detail({id: traffic.id})'>{{traffic.exit}} @ {{traffic.speed}}</button>
         </span>
         <span ng-if='traffic.note'>
           <button class='btn btn-{{traffic.category}} btn-block' title='{{traffic.note}}'><small>{{traffic.note}}</small></button>
@@ -12,4 +12,5 @@
       </div>
     </div>
   </div>
+  <div class='detail' ui-view></div>
 </div>

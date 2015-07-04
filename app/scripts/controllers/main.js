@@ -25,10 +25,12 @@
             $http.jsonp(trafficUrl).
             success(function(data, status) {
                 var trafficJson = angular.fromJson(data);
+                var i = 0;
                 angular.forEach(trafficJson.DATA, function(elem) {
                     var info = elem[1].split(' - ');
                     var level = getLevel(info[0]);
-                    items.push({exit:elem[0],speed:info[0],note:info[1],category:level});
+                    items.push({id:i,exit:elem[0],speed:info[0],note:info[1],category:level});
+                    i = i + 1;
                 });
                 responseStatus = status;
             }).
@@ -54,6 +56,9 @@
         return {
             list: function() {
                 return fetch(trafficArray);
+            },
+            detail: function(id) {
+                return trafficArray[id];
             }
         };
 
