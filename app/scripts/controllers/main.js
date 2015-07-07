@@ -30,7 +30,7 @@
                 angular.forEach(trafficJson.DATA, function(elem) {
                     var info = elem[1].split(' - ');
                     var level = getLevel(info[0]);
-                    items.push({id:i,exit:elem[0],speed:info[0],note:info[1],category:level,hidden:'hidden'});
+                    items.push({id:i,exit:elem[0],speed:info[0],note:info[1],category:level});
                     i = i + 1;
                 });
                 responseStatus = status;
@@ -67,7 +67,7 @@
                     url: logfile,
                     type: 'line',
                     colors: {
-                        speed: ['#ff0000']
+                        speed: ['#ff9900']
                     }
                 },
                 axis: {
@@ -95,7 +95,7 @@
                     show: false,
                 },
                 point: {
-                    show: true,
+                    show: false,
                     r: 1.5,
                 },
             }); 
@@ -106,20 +106,12 @@
             return s.substr(s.length-2);
         };
 
-        var setHidden = function(trafficArray) {
-            for (var i = trafficArray.length - 1; i >= 0; i--) {
-                trafficArray[i].hidden = 'hidden';
-            }
-        };
-
         return {
             list: function() {
                 return fetch(trafficArray);
             },
             detail: function(id, chart) {
                 createChart(id, chart);
-                setHidden(trafficArray);
-                trafficArray[id].hidden = '';
                 return trafficArray[id];
             }
         };
