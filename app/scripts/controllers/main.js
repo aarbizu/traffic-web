@@ -14,8 +14,8 @@
         $scope.trafficItems = TrafficService.list();
     }]);
 
- app.factory('TrafficService', ['$http',
-    function ($http) {
+ app.factory('TrafficService', ['$log', '$http',
+    function ($log, $http) {
         var trafficArray = [];
 
         var fetch = function(items) {
@@ -58,13 +58,21 @@
             var now = new Date();
             var month = now.getMonth() + 1;
             var year = now.getFullYear();
-            var logfile = '/logs/' + pad(month) + '-' + year + '-' + id + '.csv';
+            var logFileQuery = pad(month) + '-' + year + '-' + id;
+            var trafficJsonUrl = 'http://arbz.io:8888/r?'+logFileQuery+'&callback=JSON_CALLBACK';
+            var responseStatus = null;
+            var time = [];
+            var speed = [];
+
             chart = c3.generate({
                 bindto: '#chart',
                 data: {
+                    columns: [ 
+                        time,
+                        speed
+                    ],
                     x: 'time',
                     xFormat: '%Y-%m-%d:%H:%M:%S',
-                    url: logfile,
                     type: 'line',
                     colors: {
                         speed: ['#ff9900']
@@ -98,7 +106,21 @@
                     show: false,
                     r: 1.5,
                 },
-            }); 
+            });
+
+            $http.jsonp(trafficJsonUrl).
+            success(function(data, status) {
+                // $log.debug(data[0], data[1]);
+                // $log.debug(speed);
+                chart.load({ columns: [ 
+                    data[0],
+                    data[1],
+                ]});
+                responseStatus = status;
+            }).
+            error(function(data, status) {
+                responseStatus = status;
+            });
         };
 
         var pad = function(num) {
